@@ -109,13 +109,37 @@ namespace ProjectZavod.ViewModels
                     throw new Exception(Files[i] + " File is not loaded, incorrect format");
                 }
 
-                Line entity = new Line(new Vector2(5, 5), new Vector2(10, 5));
-                ourFile.AddEntity(entity);
+                //Line entity = new Line(new Vector2(5, 5), new Vector2(10, 5));
+                //ourFile.AddEntity(entity);
+                double width = 880;
+                double height = 2050;
+                ChangeSize(ourFile, width,height);
                 ourFile.Save(file);
 
                 DxfVersion dxfVersion = DxfDocument.CheckDxfFileVersion(file, out _);
                 if (dxfVersion < DxfVersion.AutoCad2000)
                     throw new Exception("you are using an old AutoCad Version");
+            }
+        }
+
+        private void ChangeSize(DxfDocument ourFile, double width, double height)
+        {
+            double newWidth = width - 860;
+            double newHeigh = height - 2050;
+            foreach (var x in ourFile.Lines)
+            {
+                if (x.Color.B == 255)
+                    x.EndPoint = x.EndPoint + new Vector3(newWidth, 0, 0);
+                if (x.Color.B == 155)
+                {
+                    x.StartPoint = x.StartPoint + new Vector3(newWidth, 0, 0);
+                    x.EndPoint = x.EndPoint + new Vector3(newWidth, 0, 0);
+                }
+            }
+            foreach (var x in ourFile.Circles)
+            {
+                if (x.Color.B == 255)
+                    x.Center = x.Center + new Vector3(newWidth, 0, 0);
             }
         }
 
